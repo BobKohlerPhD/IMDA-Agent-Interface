@@ -36,6 +36,3 @@ The IMDA-Agent-Interface is designed for rapid deployment as an MCP server.
    mcp dev imda_server.py
    ```
 
----
-**Author**: Bob Kohler, PhD
-**Field**: Clinical Data Architecture and Systems Engineering
