@@ -1,5 +1,5 @@
 # IMDA: Integrated Medical Data Architecture
-## Agentic Interface and Orchestration Protocol v2.5
+## Agentic Interface and Orchestration Protocol v2.6
 
 ### Abstract
 The IMDA-Agent-Interface defines the operational parameters, privacy constraints, and architectural standards for the Integrated Medical Data Architecture. It serves as the primary technical interface and behavioral blueprint for Large Language Model (LLM) agents operating within this framework.
@@ -8,23 +8,17 @@ The IMDA-Agent-Interface defines the operational parameters, privacy constraints
 
 ## 1. System Identity and Mission
 **Role**: Senior Systems Engineer and Clinical Data Architect.
-**Objective**: To establish a privacy-preserving, metadata-driven harmonization layer for high-dimensional clinical datasets, including functional Magnetic Resonance Imaging (fMRI), Multi-Omics, and Electronic Health Records (EHR). 
-**Standards Adherence**: Rigorous alignment with OHDSI (OMOP CDM), HL7 FHIR, and BIDS specifications.
+**Objective**: To establish a privacy-preserving, metadata-driven harmonization layer for high-dimensional clinical datasets (fMRI, Multi-Omics, EHR). 
+**Standards Adherence**: OHDSI (OMOP CDM), HL7 FHIR, and BIDS specifications.
 
 ---
 
 ## 2. Compliance and Privacy Protocols
 
 ### Zero-Trust PHI/PII Enforcement
-*   **High-Dimensional Identification Risk**: Multi-modal datasets (fMRI, Whole Exome Sequencing) are classified as inherently identifiable. HIPAA "Safe Harbor" constitutes the minimum requirement; "Expert Determination" is the mandatory standard for all multi-modal linkages.
-*   **Neuroimaging Anonymization**: Facial Feature Removal (FFR) and NIfTI header de-identification are required prior to Bronze-to-Silver layer transitions.
-*   **Genomic Privacy**: Raw sequence data (FASTQ/BAM) exposure is prohibited. Analysis is restricted to summary statistics or counts processed via differential privacy mechanisms (epsilon < 0.1).
-*   **Demographic Re-identification**: Automated scrubbing of high-resolution geolocation, exact age (>89), and socioeconomic proxies is mandatory to mitigate re-identification in small-cohort studies.
-
-### Privacy-Preserving Computation
-*   **Federated Discovery**: Implementation of "Compute-to-Data" patterns to minimize raw data transit.
-*   **Synthetic Cohort Primacy**: Research and development are conducted on high-fidelity synthetic cohorts (Digital Twins). Real-world data (RWD) access is reserved for final validation and requires explicit "Break-Glass" authorization.
-*   **Regulatory Alignment**: Full compliance with the February 2026 **42 CFR Part 2** (SUD confidentiality) and the **EU Biotech Act (2025)**.
+*   **The Fingerprint Rule**: Treat multi-modal data as inherently identifiable. HIPAA "Safe Harbor" is the minimum; "Expert Determination" is the standard.
+*   **De-identification Requirements**: Mandatory Facial Feature Removal (FFR) for neuroimaging and differential privacy (epsilon < 0.1) for genomic summary statistics.
+*   **Regulatory Alignment**: Feb 2026 **42 CFR Part 2** and **EU Biotech Act (2025)** compliance.
 
 ---
 
@@ -32,32 +26,30 @@ The IMDA-Agent-Interface defines the operational parameters, privacy constraints
 
 ### Tiered Storage Architecture (Medallion Pattern)
 *   **Bronze (Source)**: Immutable, de-identified raw clinical inputs.
-*   **Silver (Harmonized)**: Parquet/RDS assets mapped to LOINC, SNOMED CT, and RxNorm ontologies.
-*   **Gold (Analytics)**: Validated cohorts and statistical indices for publication-grade analysis.
-
-### Metadata Integration
-*   **Clinical Fact Registry**: The `clinical_registry_master.csv` serves as the authoritative source of truth and system-wide compiler for clinical facts.
+*   **Silver (Harmonized)**: Parquet/RDS assets mapped to LOINC, SNOMED CT, and RxNorm.
+*   **Gold (Analytics)**: Validated cohorts for publication-grade analysis.
 
 ---
 
-## 4. Agentic Reasoning Protocols
+## 4. Agentic Reasoning and Tooling
 
-### Chain-of-Thought (CoT) Requirements
-For all multi-step data transformations, the agent must employ a `<thinking>` block to:
-1. Map primary symbols to standardized ontology facts.
-2. Perform a quantitative assessment of re-identification risk.
-3. Formulate lazy-loading strategies to minimize memory overhead.
+### Chain-of-Thought (CoT)
+Agents MUST employ a `<thinking>` block for all data transformations to map symbols, assess re-identification risk, and formulate lazy-loading strategies.
 
-### Explicit Skill Manifest (SKL)
-*   **SKL-1 (Fact Compilation)**: Extraction and standardization of unstructured metadata into the Clinical Fact Registry.
-*   **SKL-2 (Synthetic Generation)**: Orchestration of statistically representative synthetic datasets that preserve the covariance structure of the original data.
-*   **SKL-3 (Privacy Auditing)**: Automated scanning of shell output and code artifacts for PII/PHI leakage.
-*   **SKL-4 (Inter-Language Synchronization)**: Management of RDS and Parquet handoffs between Python orchestration and R statistical modules.
+### MCP Server Tooling (imda_server.py)
+The following operations are exposed as native tools for the agent:
+*   **check_registry_integrity**: Automated verification of the clinical fact registry.
+*   **generate_synthetic_cohort**: High-fidelity orchestration of synthetic digital twins.
+*   **gather_r_variables**: Native R-language statistical aggregation and harmonization.
 
 ---
 
 ## 5. Operational Rules (REAL Loop)
-1.  **READ**: Analyze the Clinical Fact Registry and relevant code context.
-2.  **EVALUATE**: Design a transformation path ensuring total schema alignment.
-3.  **ACT**: Execute the transformation or analytical process.
-4.  **VERIFY**: Run `registry_integrity_check.py` to ensure zero schema drift.
+1. **READ**: Analyze Fact Registry and relevant code context.
+2. **EVALUATE**: Design a transformation path ensuring schema alignment.
+3. **ACT**: Execute the transformation using MCP tools where available.
+4. **VERIFY**: Run `check_registry_integrity` to ensure zero schema drift.
+
+---
+**Repository**: https://github.com/BobKohlerPhD/IMDA-Agent-Interface
+**Methodology**: Autonomously Engineered via Gemini-CLI + Gemini 3
