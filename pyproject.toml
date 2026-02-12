@@ -3,7 +3,7 @@ name = "imda-agent-interface"
 version = "0.1.0"
 description = "Integrated Medical Data Architecture (IMDA) MCP Server for multi-modal clinical data orchestration."
 authors = [
-    { name = "Bob Kohler, PhD" }
+    { name = "IMDA Contributors" }
 ]
 dependencies = [
     "mcp>=1.2.0",

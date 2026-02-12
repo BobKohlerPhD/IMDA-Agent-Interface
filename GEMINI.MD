@@ -51,5 +51,5 @@ The following operations are exposed as native tools for the agent:
 4. **VERIFY**: Run `check_registry_integrity` to ensure zero schema drift.
 
 ---
-**Repository**: https://github.com/BobKohlerPhD/IMDA-Agent-Interface
+**Repository**: [Link Restricted]
 **Methodology**: Autonomously Engineered via Gemini-CLI + Gemini 3
