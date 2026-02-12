@@ -42,7 +42,7 @@ async def generate_synthetic_cohort(size: int = 100) -> str:
     Generates a statistically representative synthetic dataset based on registry metadata.
     """
     try:
-        script_path = PROJECT_ROOT / "src/python/analysis/score-analysis_orchestrator.py"
+        script_path = PROJECT_ROOT / "src/python/analysis/clinical-analysis_orchestrator.py"
         result = subprocess.run(["python3", str(script_path), "--size", str(size)], 
                                 capture_output=True, text=True, cwd=PROJECT_ROOT)
         if result.returncode == 0:
@@ -58,7 +58,7 @@ async def gather_variables() -> str:
     Triggers the statistical gathering module to process raw variables into harmonized formats.
     """
     try:
-        script_path = PROJECT_ROOT / "src/r/variables/score-variables_gather.r"
+        script_path = PROJECT_ROOT / "src/r/variables/clinical-variables_gather.r"
         result = subprocess.run(["Rscript", str(script_path)], capture_output=True, text=True, cwd=PROJECT_ROOT)
         if result.returncode == 0:
             return f"PROCESSING COMPLETE:\n{result.stdout}"
@@ -77,7 +77,7 @@ async def list_registry_variables(
     Filters and lists variables from the master clinical registry.
     """
     try:
-        script_path = PROJECT_ROOT / "src/python/variables/score-variables_list.py"
+        script_path = PROJECT_ROOT / "src/python/variables/clinical-variables_list.py"
         cmd = ["python3", str(script_path)]
         if search_col:
             cmd.extend(["--search_col", search_col])
@@ -115,7 +115,7 @@ async def update_master_registry() -> str:
     Processes raw metadata sources to regenerate the master clinical registry.
     """
     try:
-        script_path = PROJECT_ROOT / "src/python/data_dictionary/score-variables_process_dictionary.py"
+        script_path = PROJECT_ROOT / "src/python/data_dictionary/clinical-variables_process_dictionary.py"
         result = subprocess.run(["python3", str(script_path)], capture_output=True, text=True, cwd=PROJECT_ROOT)
         if result.returncode == 0:
             return f"REGISTRY UPDATED:\n{result.stdout}"

@@ -136,15 +136,12 @@ def main():
         if var_info.empty: continue
         
         datatype = var_info.iloc[0]['datatype']
-        if datatype in ['nominal', 'ordinal']:
-            plot_script = "src/r/plots/score-plots_barchart.r"
-        else:
-            plot_script = "src/r/plots/score-plots_violin.r"
+        plot_script = "src/r/plots/clinical-plots_unified.r"
 
         output_plot_path = os.path.join(args.output_dir, f"{var_name}_plot.png")
-        print(f"Generating plot for '{var_name}'...")
+        print(f"Generating plot for '{var_name}' (Type: {datatype})...")
         try:
-            subprocess.run(["Rscript", plot_script, var_name, output_plot_path], check=True)
+            subprocess.run(["Rscript", plot_script, var_name, output_plot_path, datatype], check=True)
         except subprocess.CalledProcessError as e:
             print(f"Error plotting '{var_name}': {e}")
     
