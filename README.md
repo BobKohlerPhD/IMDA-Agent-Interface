@@ -4,29 +4,30 @@ This repository contains the Integrated Medical Data Architecture (IMDA) MCP Ser
 
 ## The Master Clinical Registry
 
-The `clinical_registry_master.csv` file is the central "Source of Truth" for your clinical project. It serves as a data dictionary that defines the schema and metadata for all clinical variables.
+The `clinical_registry_master.csv` file is the central "Source of Truth" for your clinical project. It serves as a comprehensive data dictionary that defines the schema, validation rules, and harmonization logic for all clinical variables in the architecture.
 
-### What it contains:
-- **`original_variable_name`**: The raw name from the source data.
-- **`generalized_variable_name`**: The standardized name used within IMDA.
-- **`datatype`**: The variable type (e.g., numeric, categorical).
-- **`levels`**: Valid values for categorical data.
+### Key Metadata Specification:
+- **`original_variable_name`**: The exact variable name as it exists in raw data sources (e.g., electronic health records, imaging headers).
+- **`generalized_variable_name`**: A standardized, human-readable name used for cross-study orchestration (e.g., `subject_age_years`).
+- **`datatype`**: Defines how the system processes the value:
+    - `nominal` / `ordinal`: Categorical data used for frequency analysis and grouped bar charts.
+    - `ratio` / `interval`: Continuous numerical data used for density plots and violin distributions.
+- **`levels`**: A JSON-formatted mapping (e.g., `["1 = Male", "2 = Female"]`) that allows the system to automatically apply labels to raw encoded values during visualization.
 
-### How to provide it:
-- **Existing Projects**: Set the `IMDA_PROJECT_ROOT` environment variable to the directory containing your existing `clinical_registry_master.csv`.
-- **New Projects**: The agent provides tools to process raw clinical metadata into this standardized format (see `update_master_registry`).
+### Usage Workflows:
+- **Project Bootstrapping**: Point the `IMDA_PROJECT_ROOT` environment variable to the directory containing this file. The MCP server will automatically index these variables as resources.
+- **Schema Enforcement**: The built-in integrity tools use this file to validate raw data imports, ensuring that no "schema drift" occurs over the lifecycle of the project.
+- **Automated Reporting**: The plotting engine reads this metadata to determine which statistical visualizations are most appropriate for a given variable.
 
 ---
 
 ## Features
 
 - **Registry Orchestration**: Tools to summarize, filter, and validate the master clinical registry.
-- **Data Harmonization**: Triggers for R-based statistical gathering and variable processing.
-- **Enhanced Visualizations**: A unified plotting engine (`clinical-plots_unified.r`) that generates multi-panel visualizations for variables:
-    - **Categorical Data**: Frequency bar charts and sex-stratified distributions.
-    - **Continuous Data**: Density/Histogram views and sex-stratified Violin/Boxplots.
+- **Data Harmonization**: Automated engines to process raw clinical variables into harmonized formats.
+- **Enhanced Visualizations**: A unified plotting engine that generates multi-panel visualizations (e.g., distribution views, sex-stratified analysis) based on registry metadata.
 - **Synthetic Data**: Tools for generating statistically representative synthetic cohorts and test datasets.
-- **Integrity Checks**: Automated suite to ensure zero schema drift.
+- **Integrity Checks**: Automated suite to ensure zero schema drift across the data architecture.
 
 ## Setup
 
