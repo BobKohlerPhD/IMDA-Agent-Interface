@@ -5,12 +5,10 @@ from typing import Optional
 from mcp.server.fastmcp import FastMCP
 
 # Initialize the IMDA MCP Server
-# The server name is now generic
 mcp = FastMCP("IMDA-Orchestrator")
 
-# Use environment variable for project root, falling back to a path relative to the script
-DEFAULT_ROOT = Path(__file__).parent.parent.parent.parent.resolve()
-PROJECT_ROOT = Path(os.getenv("IMDA_PROJECT_ROOT", str(DEFAULT_ROOT)))
+# In this repository, scripts are located relative to the server root
+PROJECT_ROOT = Path(__file__).parent.resolve()
 
 @mcp.resource("clinical-registry://master")
 def get_registry_master() -> str:
@@ -27,9 +25,6 @@ def get_registry_master() -> str:
 async def check_registry_integrity() -> str:
     """
     Executes the integrity suite to ensure zero schema drift in the master registry.
-    
-    Returns:
-        A status message indicating whether the integrity check passed or failed.
     """
     try:
         script_path = PROJECT_ROOT / "src/python/data_dictionary/registry_integrity_check.py"
@@ -45,9 +40,6 @@ async def check_registry_integrity() -> str:
 async def generate_synthetic_cohort(size: int = 100) -> str:
     """
     Generates a statistically representative synthetic dataset based on registry metadata.
-    
-    Args:
-        size: The number of records to generate.
     """
     try:
         script_path = PROJECT_ROOT / "src/python/analysis/score-analysis_orchestrator.py"
@@ -83,11 +75,6 @@ async def list_registry_variables(
 ) -> str:
     """
     Filters and lists variables from the master clinical registry.
-    
-    Args:
-        keyword: Optional search term.
-        search_col: The column to search within (e.g. for filtering by category or type).
-        output_col: The column to return values from.
     """
     try:
         script_path = PROJECT_ROOT / "src/python/variables/score-variables_list.py"
