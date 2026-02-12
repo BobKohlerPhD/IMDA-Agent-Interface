@@ -139,5 +139,22 @@ async def generate_test_data() -> str:
     except Exception as e:
         return f"ERROR: {str(e)}"
 
+@mcp.tool()
+async def suggest_metadata_from_raw(file_path: str) -> str:
+    """
+    Analyzes a raw CSV file to suggest mappings for the Master Clinical Registry.
+    Useful when headers are cryptic or human-readable names are missing.
+    """
+    try:
+        script_path = PROJECT_ROOT / "src/python/data_dictionary/clinical-metadata_suggester.py"
+        result = subprocess.run(["python3", str(script_path), file_path], 
+                                capture_output=True, text=True, cwd=PROJECT_ROOT)
+        if result.returncode == 0:
+            return f"SUGGESTED REGISTRY ENTRIES:\n{result.stdout}"
+        else:
+            return f"ERROR ANALYZING FILE:\n{result.stderr}"
+    except Exception as e:
+        return f"ERROR: {str(e)}"
+
 if __name__ == "__main__":
     mcp.run()

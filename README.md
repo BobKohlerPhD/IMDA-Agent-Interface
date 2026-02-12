@@ -28,6 +28,7 @@ The `clinical_registry_master.csv` file is the central "Source of Truth" for you
 - **Enhanced Visualizations**: A unified plotting engine that generates multi-panel visualizations (e.g., distribution views, sex-stratified analysis) based on registry metadata.
 - **Synthetic Data**: Tools for generating statistically representative synthetic cohorts and test datasets.
 - **Integrity Checks**: Automated suite to ensure zero schema drift across the data architecture.
+- **Smart Discovery**: AI-assisted tools to handle "messy" data, including fuzzy variable matching and automated metadata suggestion from cryptic raw headers.
 
 ## Setup
 
