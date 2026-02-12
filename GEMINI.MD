@@ -38,14 +38,16 @@ Agents MUST employ a `<thinking>` block for all data transformations to map symb
 
 ### MCP Server Tooling (imda_server.py)
 The following operations are exposed as native tools for the agent:
-*   **check_registry_integrity**: Automated verification of the clinical fact registry.
+*   **check_registry_integrity**: Automated verification of the Master Clinical Registry.
 *   **generate_synthetic_cohort**: High-fidelity orchestration of synthetic digital twins.
-*   **gather_r_variables**: Native R-language statistical aggregation and harmonization.
+*   **gather_variables**: Native R-language statistical aggregation and harmonization.
+*   **suggest_metadata_from_raw**: AI-assisted inference of metadata from cryptic raw headers.
+*   **list_registry_variables**: Resilient discovery of clinical variables with fuzzy matching.
 
 ---
 
 ## 5. Operational Rules (REAL Loop)
-1. **READ**: Analyze Fact Registry and relevant code context.
+1. **READ**: Analyze Master Clinical Registry and relevant code context.
 2. **EVALUATE**: Design a transformation path ensuring schema alignment.
 3. **ACT**: Execute the transformation using MCP tools where available.
 4. **VERIFY**: Run `check_registry_integrity` to ensure zero schema drift.
