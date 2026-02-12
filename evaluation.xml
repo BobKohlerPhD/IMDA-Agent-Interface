@@ -1,0 +1,22 @@
+<evaluation>
+  <qa_pair>
+    <question>Use the summarize_registry tool. How many columns are reported in the master clinical registry?</question>
+    <answer>46</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>List the variables in the registry. How many unique variables are found when searching for a specific keyword known to exist in the registry metadata?</question>
+    <answer>24</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Check the integrity of the master registry using the appropriate tool. What is the status returned?</question>
+    <answer>INTEGRITY PASSED</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Generate a synthetic cohort of size 50. Does the tool report success and include 'COHORT GENERATED' in the output?</question>
+    <answer>Yes</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>What is the resource URI used to access the master clinical registry content?</question>
+    <answer>clinical-registry://master</answer>
+  </qa_pair>
+</evaluation>
