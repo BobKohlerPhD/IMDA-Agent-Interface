@@ -6,7 +6,7 @@ def create_samples():
     root = Path("data/bronze/genomics")
     root.mkdir(parents=True, exist_ok=True)
     
-    # 1. Genomics Sample
+    # Genomics Sample
     genomics_data = {
         "participant_id": ["sub-001", "sub-001"],
         "rsid": ["rs12345", "rs67890"],
@@ -15,7 +15,7 @@ def create_samples():
     }
     pd.DataFrame(genomics_data).to_csv(root / "sub-001_variants.csv", index=False)
     
-    # 2. Proteomics Sample
+    # Proteomics Sample
     prot_root = Path("data/bronze/proteomics")
     prot_root.mkdir(parents=True, exist_ok=True)
     proteomics_data = {
@@ -25,7 +25,7 @@ def create_samples():
     }
     pd.DataFrame(proteomics_data).to_csv(prot_root / "sub-001_mass_spec_report.csv", index=False)
     
-    # 3. Metabolomics Sample
+    # Metabolomics Sample
     metab_root = Path("data/bronze/metabolomics")
     metab_root.mkdir(parents=True, exist_ok=True)
     metabolomics_data = {

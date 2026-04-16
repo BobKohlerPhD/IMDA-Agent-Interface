@@ -23,7 +23,7 @@ class WearableHarmonizer(BaseHarmonizer):
         if df.empty:
             return df
             
-        # 1. High-Frequency Aggregation Logic
+        # High-Frequency Aggregation Logic
         # Wearables usually output arrays of data rather than scalars.
         # We must reduce these arrays into meaningful biomarkers.
         if 'heart_rate_array' in df.columns:
@@ -42,7 +42,7 @@ class WearableHarmonizer(BaseHarmonizer):
                 total = len(stages)
                 df['sleep_efficiency'] = ((deep + rem) / total) * 100 if total > 0 else 0
 
-        # 2. Schema Enforcement
+        # Schema Enforcement
         mapped_vars = self.registry['original_variable_name'].tolist()
         available_cols = [c for c in df.columns if c in mapped_vars]
         

@@ -17,7 +17,7 @@ from src.python.plugins.clinical_nlp import ClinicalNLPHarmonizer
 from src.python.plugins.fmri_nilearn import fMRINilearnHarmonizer
 
 def main():
-    print("=== IMDA SOTA Architecture: Federated Multi-Modal Data Engine ===")
+    print("=== IMDA Architecture: Federated Multi-Modal Data Engine ===")
     root = Path(__file__).parent.resolve()
     engine = IMDAEngine(root)
     
@@ -33,7 +33,10 @@ def main():
 
     # Create samples if missing
     if not (root / "data" / "bronze" / "genomics" / "sub-001_variants.csv").exists():
-        subprocess.run(["python3", "create_omics_samples.py"])
+        try:
+            subprocess.run(["python3", "create_omics_samples.py"], check=True)
+        except Exception as e:
+            print(f"Sample generation failed: {e}")
 
     print("\n>>> Processing Multi-Modal Federated Data via Parallel Batching...")
     tasks = [

@@ -17,16 +17,16 @@ def run_step(name, cmd):
         exit(1)
 
 def main():
-    # 1. READ: Verify Registry Integrity
+    # READ: Verify Registry Integrity
     run_step("READ (Integrity Check)", ["python3", "src/python/data_dictionary/registry_integrity_check.py"])
     
-    # 2. EVALUATE & ACT: Ingest FHIR
+    # EVALUATE & ACT: Ingest FHIR
     run_step("ACT (FHIR Harmonization)", [
         "python3", "src/python/variables/clinical-fhir_harmonizer.py", 
         "sample_fhir_bundle.json", "--output", "harmonized_fhir.csv"
     ])
     
-    # 2. EVALUATE & ACT: Ingest BIDS
+    # EVALUATE & ACT: Ingest BIDS
     # Rename sample to follow BIDS naming for ID extraction test
     bids_file = "sub-001_ses-01_task-rest_bold.json"
     if os.path.exists("sample_bids_sidecar.json"):
@@ -37,7 +37,7 @@ def main():
         bids_file, "--output", "harmonized_bids.csv"
     ])
     
-    # 3. ACT: Merge and Redact (Simulating Silver -> Gold tier transition)
+    # ACT: Merge and Redact (Simulating Silver -> Gold tier transition)
     print("\n>>> [REAL-L] STEP: Merge Tier (Silver)")
     df_fhir = pd.read_csv("harmonized_fhir.csv")
     df_bids = pd.read_csv("harmonized_bids.csv")
@@ -47,13 +47,13 @@ def main():
     df_merged.to_csv("silver_merged_data.csv", index=False)
     print(f"Merged {len(df_merged)} records into silver_merged_data.csv")
     
-    # 4. ACT: Privacy Redaction
+    # ACT: Privacy Redaction
     run_step("ACT (Privacy Redaction)", [
         "python3", "src/python/data_dictionary/clinical-privacy_redactor.py", 
         "silver_merged_data.csv", "--epsilon", "0.05", "--output", "gold_redacted_data.csv"
     ])
     
-    # 5. VERIFY: Final automated summary
+    # VERIFY: Final automated summary
     run_step("VERIFY (Registry Summary)", ["python3", "src/python/data_dictionary/check_datadictionary_summary.py"])
 
     print("\n" + "="*40)

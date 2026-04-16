@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 
 def create_samples():
-    # 1. Clinical Survey Data
+    # Clinical Survey Data
     assess1 = {
         "participant_id": ["sub-001"],
         "survey_name": ["Mental Health Battery Q1"],
@@ -11,7 +11,7 @@ def create_samples():
     }
     pd.DataFrame(assess1).to_csv("data/bronze/assessments/sub-001_mh_survey.csv", index=False)
     
-    # 2. Biospecimen Data - Blood Panel
+    # Biospecimen Data - Blood Panel
     bio1 = {
         "participant_id": ["sub-001"],
         "specimen_type": ["blood"],
@@ -20,7 +20,7 @@ def create_samples():
     }
     pd.DataFrame(bio1).to_csv("data/bronze/biospecimens/sub-001_blood_draw.csv", index=False)
     
-    # 3. Biospecimen Data - Saliva 
+    # Biospecimen Data - Saliva 
     bio2 = {
         "participant_id": ["sub-001"],
         "specimen_type": ["saliva"],

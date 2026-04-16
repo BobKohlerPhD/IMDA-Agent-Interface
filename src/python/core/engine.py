@@ -51,7 +51,7 @@ class IMDAEngine:
         return plugin.run(source_path, output_path)
 
     def batch_process(self, tasks: List[tuple]):
-        """SOTA: Asynchronous multi-modal batch ingestion using thread pooling."""
+        """Asynchronous multi-modal batch ingestion using thread pooling."""
         self.logger.info(f"Starting parallel batch ingestion of {len(tasks)} items...")
         results = []
         with ThreadPoolExecutor(max_workers=4) as executor:
@@ -65,12 +65,12 @@ class IMDAEngine:
         return results
 
     def _generate_provenance_hash(self, row: pd.Series) -> str:
-        """SOTA: Generate W3C-PROV compliant cryptographic hash for data traceability."""
+        """Generate W3C-PROV compliant cryptographic hash for data traceability."""
         row_str = "".join([str(val) for val in row.values])
         return hashlib.sha256(row_str.encode('utf-8')).hexdigest()
 
     def generate_gold_tier(self):
-        """SOTA: Aggregates all silver data into a unified Multi-Modal Tensor DataFrame."""
+        """Aggregates all silver data into a unified Multi-Modal Tensor DataFrame."""
         self.logger.info("Generating Gold Tier Cohort (Multi-Modal Outer Join)...")
         silver_files = list(self.silver_dir.glob("*.csv"))
         if not silver_files:
@@ -82,7 +82,7 @@ class IMDAEngine:
             try:
                 df = pd.read_csv(f)
                 
-                # SOTA: Basic Longitudinal Temporal Alignment
+                # Basic Longitudinal Temporal Alignment
                 # If visit_session is missing, attempt to extract from filename or default to ses-01
                 if 'visit_session' not in df.columns:
                     stem = f.stem
@@ -118,7 +118,7 @@ class IMDAEngine:
             # Clean duplicated columns if any
             gold_df = gold_df.loc[:, ~gold_df.columns.str.endswith('_dup')]
             
-            # SOTA: Add Provenance Hashes to every harmonized patient record
+            # Add Provenance Hashes to every harmonized patient record
             gold_df['provenance_hash_sha256'] = gold_df.apply(self._generate_provenance_hash, axis=1)
             
             output_path = self.gold_dir / "gold_multimodal_cohort.csv"

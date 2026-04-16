@@ -53,15 +53,15 @@ def main():
 
     print(f"Parsing FHIR Bundle: {args.bundle_json}...")
 
-    # 1. Subject Identification
+    # Subject Identification
     patient = extract_patient_info(bundle)
     subject_id = patient.get('subject_id', 'unknown_subject')
     
-    # 2. Observation Extraction
+    # Observation Extraction
     observations = extract_observations(bundle)
     print(f" - Found {len(observations)} Observation resources.")
 
-    # 3. Mapping to IMDA Registry
+    # Mapping to IMDA Registry
     # (Simplified: in a real system, we would have a lookup table for LOINC -> generalized_name)
     data_rows = []
     

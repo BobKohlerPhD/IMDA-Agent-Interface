@@ -61,20 +61,20 @@ def main():
 
     print(f"Starting redaction on {len(original_cols)} variables...")
 
-    # 1. Direct Redaction (PHI/PII)
+    # Direct Redaction (PHI/PII)
     for col in pii_vars:
         if col in df.columns:
             datatype = registry[registry['original_variable_name'] == col]['datatype'].iloc[0]
             df[col] = redact_column(df[col], datatype)
             print(f" - Applied PHA/PII Redaction to '{col}'")
 
-    # 2. Differential Privacy (Numerical Data)
+    # Differential Privacy (Numerical Data)
     for col in ratio_vars:
         if col in df.columns:
             df[col] = apply_differential_privacy(df[col], epsilon=args.epsilon)
             print(f" - Applied Differential Privacy (eps={args.epsilon}) to '{col}'")
 
-    # 3. Drop unmapped columns to ensure Zero-Trust compliance
+    # Drop unmapped columns to ensure Zero-Trust compliance
     # (Only export what is in the registry)
     mapped_vars = registry['original_variable_name'].tolist()
     cols_to_keep = [c for c in df.columns if c in mapped_vars]

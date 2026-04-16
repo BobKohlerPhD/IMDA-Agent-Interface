@@ -19,7 +19,7 @@ class ClinicalNLPHarmonizer(BaseHarmonizer):
         if df.empty:
             return df
             
-        # 1. NLP Extraction Simulation
+        # NLP Extraction Simulation
         # In a production environment, this would call a local LLM or NLP service 
         # (like MedCAT or a Gemini fine-tune) to extract SNOMED codes.
         def _simulate_nlp_extraction(text):
@@ -36,7 +36,7 @@ class ClinicalNLPHarmonizer(BaseHarmonizer):
              # The raw note is PII, it will be kept here initially but must be redacted
              # prior to Gold Tier insertion based on registry policies.
 
-        # 2. Schema Enforcement
+        # Schema Enforcement
         mapped_vars = self.registry['original_variable_name'].tolist()
         available_cols = [c for c in df.columns if c in mapped_vars]
         

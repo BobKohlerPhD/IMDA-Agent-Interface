@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 def create_samples():
-    # 1. Wearable JSON
+    # Wearable JSON
     wearable = {
         "participant_id": "sub-001",
         "visit_session": "ses-01",
@@ -14,7 +14,7 @@ def create_samples():
     with open("data/bronze/wearables/sub-001_ses-01_actigraphy.json", 'w') as f:
         json.dump(wearable, f)
         
-    # 2. NLP Note CSV
+    # NLP Note CSV
     nlp_data = {
         "participant_id": ["sub-001"],
         "visit_session": ["ses-01"],

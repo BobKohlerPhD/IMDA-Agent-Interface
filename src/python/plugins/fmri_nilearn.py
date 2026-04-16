@@ -6,7 +6,7 @@ from src.python.core.harmonizer import BaseHarmonizer
 
 class fMRINilearnHarmonizer(BaseHarmonizer):
     """
-    State-of-the-art computational plug-in.
+    Computational plug-in for fMRI.
     Instead of just parsing metadata, it ingests a 4D fMRI NIfTI,
     processes the BOLD signals across time, and extracts the global amplitude.
     """
@@ -18,12 +18,12 @@ class fMRINilearnHarmonizer(BaseHarmonizer):
             
         self.logger.info(f"Nilearn Engine computing BOLD amplitudes for {source_path.name}...")
         try:
-            # 1. Load the 4D fMRI data
+            # Load the 4D fMRI data
             img = nib.load(str(source_path))
             data = img.get_fdata()
             
             # For demonstration: We compute a global mean timeseries (taking mean across spatial dimensions)
-            # In a real SOTA implementation, we'd use nilearn.maskers.NiftiMasker with a brain mask
+            # For a more advanced implementation, we'd use nilearn.maskers.NiftiMasker with a brain mask
             # data shape is (x, y, z, time)
             if len(data.shape) == 4:
                 global_timeseries = np.mean(data, axis=(0, 1, 2))
