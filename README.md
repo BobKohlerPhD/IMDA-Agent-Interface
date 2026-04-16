@@ -1,16 +1,15 @@
 # Integrated Medical Data Architecture (IMDA)
 
-The Integrated Medical Data Architecture (IMDA) is a multi-modal clinical data orchestration framework designed to address multimodal data constraints inherent in large cohonort data collection. By fusing high-dimensional arrays from disparate biomedical domains—including Neuroimaging (fMRI/sMRI BIDS), Multi-Omics (Genomics, Proteomics, Metabolomics), Digital Biomarkers (Wearables), and Electronic Health Records (Clinical NLP & EHR)—IMDA yields mathematically aligned, temporally accurate, and cryptographically secure multi-modal tensors for immediate machine learning interoperability.
-
+The Integrated Medical Data Architecture (IMDA) is a multi-modal clinical data orchestration pipeline that helps  address multimodal data constraints inherent in large cohonort data collection. This project seeks to fuse high-dimensional arrays from different biomedical domains such as Neuroimaging (fMRI/sMRI BIDS), 'Multi-Omics' (e.g., Genomics, Proteomics, Metabolomics), Digital Biomarkers (e.g., Wearables), and Electronic Health Records (e.g., Clinical NLP & EHR)
 
 
 ## Data Types and General Information
 
 IMDA is an extensible Object-Oriented Engine (`IMDAEngine`) with a data-tier architecture described below: 
 
-**Bronze Tier (Raw Ingestion)**: NIfTI, DICOM, fastq-derived CSVs, REDCap exports, raw wearable JSONs
-**Silver Tier (Harmonization)**: Zero-trust schema mapping executed via isolated plugins. Domain-specific metrics are mathematically validated against the `clinical_registry_master`, uniformity across sites.
-**Gold Tier (Structure)**: Data is dynamically aligned along Subject (`participant_id`) and Time (`visit_session`)
+*   **Bronze Tier (Raw Ingestion)**: NIfTI, DICOM, fastq-derived CSVs, REDCap exports, raw wearable JSONs
+*   **Silver Tier (Harmonization)**: Zero-trust schema mapping executed via isolated plugins. Domain-specific metrics are mathematically validated against the `clinical_registry_master`, uniformity across sites.
+*   **Gold Tier (Structure)**: Data is dynamically aligned along Subject (`participant_id`) and Time (`visit_session`)
 
 ---
 
