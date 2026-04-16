@@ -35,9 +35,26 @@ Any variable undetected within the schema registry is automatically removed, hel
 
 ---
 
-## 4. MCP Protocol
+## MCP Protocol
 
-IMDA is a Python library and AI-native interface. Under the `imda_server.py` implementation, the architecture acts as an autonomous node utilizing the **Model Context Protocol (MCP). Allows for lanuage models to explore data, issue pipeline ingestions, plot, and model data autonomously without manual user intervention.
+IMDA serves dual utility as both a Python-native analytical library and an AI-native interface. Under the `imda_server.py` implementation, the architecture acts as an autonomous node utilizing the **Model Context Protocol (MCP)**. This allows large-scale Language Models (LLMs) to programmatically traverse cohorts, issue pipeline ingestions, plot, and model data autonomously without manual user intervention.
+
+### Connecting to an LLM
+To expose IMDA to an LLM (like Claude Desktop or an AI Agent), you can run the server via `fastmcp`:
+
+1.  **Start the MCP Server**:
+    ```bash
+    fastmcp run imda_server.py
+    ```
+    *(Alternatively, run it dynamically within your agent's config using `python3 imda_server.py` via standard input/output).*
+
+2.  **LLM Interaction**:
+    Once attached, LLM will automatically index IMDA's tools such as:
+    *   `process_imaging_metadata`: Point the agent to raw `.nii.gz` files to extract 4D BOLD signals natively.
+    *   `check_registry_integrity`: Let the agent verify the gold tier schema without writing code.
+    *   `generate_synthetic_cohort`: Have the agent mimic the privacy-redacted patient data perfectly for testing.
+
+Allows LLM to act as a fully functioning pipeline for updating registries and pipelining raw input data via standard prompting.
 
 ---
 
