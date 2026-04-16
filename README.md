@@ -1,47 +1,51 @@
-# IMDA Agent Interface
+# Integrated Medical Data Architecture (IMDA)
 
-This repository contains the Integrated Medical Data Architecture (IMDA) MCP Server. It provides an autonomously engineered context protocol for the orchestration of high-dimensional, multi-modal clinical data.
-
-## The Master Clinical Registry
-
-The `clinical_registry_master.csv` file is the central "Source of Truth" for your clinical project. It serves as a comprehensive data dictionary that defines the schema, validation rules, and harmonization logic for all clinical variables in the architecture.
-
-### Key Metadata Specification:
-- **`original_variable_name`**: The exact variable name as it exists in raw data sources (e.g., electronic health records, imaging headers).
-- **`generalized_variable_name`**: A standardized, human-readable name used for cross-study orchestration (e.g., `subject_age_years`).
-- **`datatype`**: Defines how the system processes the value:
-    - `nominal` / `ordinal`: Categorical data used for frequency analysis and grouped bar charts.
-    - `ratio` / `interval`: Continuous numerical data used for density plots and violin distributions.
-- **`levels`**: A JSON-formatted mapping (e.g., `["1 = Male", "2 = Female"]`) that allows the system to automatically apply labels to raw encoded values during visualization.
-
-### Usage Workflows:
-- **Project Bootstrapping**: Point the `IMDA_PROJECT_ROOT` environment variable to the directory containing this file. The MCP server will automatically index these variables as resources.
-- **Schema Enforcement**: The built-in integrity tools use this file to validate raw data imports, ensuring that no "schema drift" occurs over the lifecycle of the project.
-- **Automated Reporting**: The plotting engine reads this metadata to determine which statistical visualizations are most appropriate for a given variable.
+The Integrated Medical Data Architecture (IMDA) is a multi-modal clinical data orchestration framework designed to address multimodal data constraints inherent in large cohonort data collection. By fusing high-dimensional arrays from disparate biomedical domains—including Neuroimaging (fMRI/sMRI BIDS), Multi-Omics (Genomics, Proteomics, Metabolomics), Digital Biomarkers (Wearables), and Electronic Health Records (Clinical NLP & EHR)—IMDA yields mathematically aligned, temporally accurate, and cryptographically secure multi-modal tensors for immediate machine learning interoperability.
 
 ---
 
-## Features
+## 1. Architectural Paradigms
 
-- **Registry Orchestration**: Tools to summarize, filter, and validate the master clinical registry.
-- **Data Harmonization**: Automated engines to process raw clinical variables into harmonized formats.
-- **Enhanced Visualizations**: A unified plotting engine that generates multi-panel visualizations (e.g., distribution views, sex-stratified analysis) based on registry metadata.
-- **Synthetic Data**: Tools for generating statistically representative synthetic cohorts and test datasets.
-- **Integrity Checks**: Automated suite to ensure zero schema drift across the data architecture.
-- **Smart Discovery**: AI-assisted tools to handle "messy" data, including fuzzy variable matching and automated metadata suggestion from cryptic raw headers.
+IMDA departs from ad-hoc analysis scripting by instituting a rigorous **Medallion Tiered Storage Architecture** governed by an extensible Object-Oriented Engine (`IMDAEngine`).
 
-## Setup
+### Data Pipeline
+1.  **Bronze Tier (Raw Ingestion)**: NIfTI, DICOM, fastq-derived CSVs, REDCap exports, raw wearable JSONs
+2.  **Silver Tier (Harmonization)**: Zero-trust schema mapping executed via isolated plugins. Domain-specific metrics are mathematically validated against the `clinical_registry_master`, uniformity across sites.
+3.  **Gold Tier (Federated Tensor Generation)**: Data is dynamically aligned along Subject (`participant_id`) and Time (`visit_session`)
 
-1. Install dependencies:
-   ```bash
-   pip install .
-   ```
+---
 
-2. Run the server:
-   ```bash
-   python imda_server.py
-   ```
+## 2. Supported Modalities & Pipelines
 
-## Configuration
+The architecture handles complex native processing through high-efficiency asynchronous batching, allowing simultaneous evaluation of non-isomorphic data structures.
 
-Set the `IMDA_PROJECT_ROOT` environment variable to point to your clinical data project directory (containing `clinical_registry_master.csv`).
+*   **Neuroimaging (fMRI & sMRI)**: Directly ingests 4D NIfTI constructs. Utilizing `nibabel` and `nilearn`, the engine autonomously extracts BOLD (Blood-Oxygen-Level-Dependent) time-series metadata and computes functional amplitude variances natively.
+*   **Multi-Omics (Genomic / Proteomic)**: Standardizes Variant Call Formats (e.g., resolving `rsid` and zygosity) and maps proteomic abundances (UniProt) securely into the cohort timeline.
+*   **Clinical NLP**: Translates subjective, unstructured physician free-text into computable numerical features, extracting ontological identifiers (e.g., SNOMED-CT).
+*   **Digital Biomarkers**: Deconstructs high-frequency time-series arrays representing wearable actigraphy (e.g., Continuous Heart Rate) to extract clinically significant scalar representations such as sleep efficiency.
+*   **Biological Specimens & Psychometrics**: Standardizes Laboratory Information Systems (LIMS) assays and clinical survey instruments into standardized statistical bounds.
+
+---
+
+## 3. Cryptographic Provenance & Zero-Trust Privacy
+
+Clinical environments operate under strict compliance constraints (HIPAA, GDPR, EU AI Act). IMDA ensures provenance via automated cryptographic hashing. 
+
+During the generation of the Gold Tier, the Engine implements a **W3C-PROV Compliant Routine** appending unequivocally unique SHA-256 hashes (`provenance_hash_sha256`) to every mathematically joined row. This enforces granular lineage tracking, ensuring every tensor utilized directly connects to an immutable raw asset. 
+
+Additionally, any variable undetected within the dynamic schema registry is automatically expunged natively, guaranteeing unapproved Protected Health Information (PHI) never enters the computational layer.
+
+---
+
+## 4. MCP Protocol
+
+IMDA serves dual utility as both a Python-native library and AI-native interface. Under the `imda_server.py` implementation, the architecture acts as an autonomous node utilizing the **Model Context Protocol (MCP). Allows for lanuage models to explore data, issue pipeline ingestions, plot, and model data autonomously without manual user intervention.
+
+---
+
+## To run
+
+```bash
+python3 system_init.py
+```
+

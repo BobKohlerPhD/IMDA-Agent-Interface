@@ -46,11 +46,12 @@ The following operations are exposed as native tools for the agent:
 
 ---
 
-## 5. Operational Rules (REAL Loop)
+## 5. Operational Rules (REAL-L Loop)
 1. **READ**: Analyze Master Clinical Registry and relevant code context.
 2. **EVALUATE**: Design a transformation path ensuring schema alignment.
-3. **ACT**: Execute the transformation using MCP tools where available.
+3. **ACT**: Execute the transformation using async MCP tools.
 4. **VERIFY**: Run `check_registry_integrity` to ensure zero schema drift.
+5. **LOG**: Automatically record every action in the `imda_audit.log` for clinical traceability.
 
 ---
 **Repository**: [Link Restricted]

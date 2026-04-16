@@ -1,160 +1,73 @@
+import asyncio
+import logging
+import json
 import os
-import subprocess
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 from mcp.server.fastmcp import FastMCP
+
+# Import the new Skeletal Architecture
+from src.python.core.engine import IMDAEngine
+from src.python.plugins.imaging_bids import BIDSHarmonizer
+
+# Configure Logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("logs/imda_audit.log"),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger("IMDA-Orchestrator")
 
 # Initialize the IMDA MCP Server
 mcp = FastMCP("IMDA-Orchestrator")
 
-# In this repository, scripts are located relative to the server root
-PROJECT_ROOT = Path(__file__).parent.resolve()
+# Initialize the Engine
+PROJECT_ROOT = Path(os.environ.get("IMDA_PROJECT_ROOT", Path(__file__).parent.resolve()))
+engine = IMDAEngine(PROJECT_ROOT)
+engine.register_plugin("bids", BIDSHarmonizer)
+
+@mcp.tool()
+async def process_imaging_metadata(filename: str) -> str:
+    """
+    Processes neuroimaging metadata from the Bronze tier using the BIDS plugin.
+    Example filename: 'sub-001/ses-01/func/sub-001_ses-01_task-rest_bold.json'
+    """
+    try:
+        # Note: In a real system, this would be an async call
+        result_df = engine.process_modality("bids", filename)
+        if result_df is not None and not result_df.empty:
+            return f"Successfully processed {filename}. Modalitiy inferred: {result_df['modality_category'].iloc[0]}"
+        else:
+            return f"Failed to process {filename} or no mapped variables found."
+    except Exception as e:
+        logger.exception(f"Error processing {filename}: {e}")
+        return f"Error: {str(e)}"
+
+@mcp.tool()
+async def list_data_tiers() -> str:
+    """
+    Lists the current contents of Bronze, Silver, and Gold tiers.
+    """
+    summary = []
+    for tier in ["bronze", "silver", "gold"]:
+        tier_path = PROJECT_ROOT / "data" / tier
+        files = list(tier_path.glob("**/*"))
+        summary.append(f"### {tier.upper()} TIER")
+        summary.append(f"Total Files: {len(files)}")
+        for f in files[:5]: # Show first 5
+            summary.append(f" - {f.relative_to(tier_path)}")
+        if len(files) > 5:
+            summary.append(" - ...")
+        summary.append("")
+    return "\n".join(summary)
 
 @mcp.resource("clinical-registry://master")
 def get_registry_master() -> str:
-    """
-    Returns the contents of the master clinical registry CSV.
-    """
-    registry_path = PROJECT_ROOT / "clinical_registry_master.csv"
-    try:
-        return registry_path.read_text()
-    except Exception as e:
-        return f"Error reading registry: {str(e)}"
-
-@mcp.tool()
-async def check_registry_integrity() -> str:
-    """
-    Executes the integrity suite to ensure zero schema drift in the master registry.
-    """
-    try:
-        script_path = PROJECT_ROOT / "src/python/data_dictionary/registry_integrity_check.py"
-        result = subprocess.run(["python3", str(script_path)], capture_output=True, text=True, cwd=PROJECT_ROOT)
-        if result.returncode == 0:
-            return f"INTEGRITY PASSED:\n{result.stdout}"
-        else:
-            return f"INTEGRITY FAILED:\n{result.stderr}\nSTDOUT:\n{result.stdout}"
-    except Exception as e:
-        return f"ERROR: Could not execute integrity check: {str(e)}"
-
-@mcp.tool()
-async def generate_synthetic_cohort(size: int = 100) -> str:
-    """
-    Generates a statistically representative synthetic dataset based on registry metadata.
-    """
-    try:
-        script_path = PROJECT_ROOT / "src/python/analysis/clinical-analysis_orchestrator.py"
-        result = subprocess.run(["python3", str(script_path), "--size", str(size)], 
-                                capture_output=True, text=True, cwd=PROJECT_ROOT)
-        if result.returncode == 0:
-            return f"COHORT GENERATED:\n{result.stdout}"
-        else:
-            return f"ERROR GENERATING COHORT:\n{result.stderr}"
-    except Exception as e:
-        return f"ERROR: {str(e)}"
-
-@mcp.tool()
-async def gather_variables() -> str:
-    """
-    Triggers the statistical gathering module to process raw variables into harmonized formats.
-    """
-    try:
-        script_path = PROJECT_ROOT / "src/r/variables/clinical-variables_gather.r"
-        result = subprocess.run(["Rscript", str(script_path)], capture_output=True, text=True, cwd=PROJECT_ROOT)
-        if result.returncode == 0:
-            return f"PROCESSING COMPLETE:\n{result.stdout}"
-        else:
-            return f"PROCESSING FAILED:\n{result.stderr}"
-    except Exception as e:
-        return f"ERROR: execution failed: {str(e)}"
-
-@mcp.tool()
-async def list_registry_variables(
-    keyword: Optional[str] = None, 
-    search_col: Optional[str] = None, 
-    output_col: Optional[str] = None
-) -> str:
-    """
-    Filters and lists variables from the master clinical registry.
-    """
-    try:
-        script_path = PROJECT_ROOT / "src/python/variables/clinical-variables_list.py"
-        cmd = ["python3", str(script_path)]
-        if search_col:
-            cmd.extend(["--search_col", search_col])
-        if output_col:
-            cmd.extend(["--output_col", output_col])
-        if keyword:
-            cmd.extend(["--keyword", keyword])
-            
-        result = subprocess.run(cmd, capture_output=True, text=True, cwd=PROJECT_ROOT)
-        if result.returncode == 0:
-            return result.stdout
-        else:
-            return f"ERROR LISTING VARIABLES:\n{result.stderr}"
-    except Exception as e:
-        return f"ERROR: {str(e)}"
-
-@mcp.tool()
-async def summarize_registry() -> str:
-    """
-    Provides a summary of the master registry, including dimensions and data quality metrics.
-    """
-    try:
-        script_path = PROJECT_ROOT / "src/python/data_dictionary/check_datadictionary_summary.py"
-        result = subprocess.run(["python3", str(script_path)], capture_output=True, text=True, cwd=PROJECT_ROOT)
-        if result.returncode == 0:
-            return result.stdout
-        else:
-            return f"ERROR SUMMARIZING REGISTRY:\n{result.stderr}"
-    except Exception as e:
-        return f"ERROR: {str(e)}"
-
-@mcp.tool()
-async def update_master_registry() -> str:
-    """
-    Processes raw metadata sources to regenerate the master clinical registry.
-    """
-    try:
-        script_path = PROJECT_ROOT / "src/python/data_dictionary/clinical-variables_process_dictionary.py"
-        result = subprocess.run(["python3", str(script_path)], capture_output=True, text=True, cwd=PROJECT_ROOT)
-        if result.returncode == 0:
-            return f"REGISTRY UPDATED:\n{result.stdout}"
-        else:
-            return f"UPDATE FAILED:\n{result.stderr}"
-    except Exception as e:
-        return f"ERROR: {str(e)}"
-
-@mcp.tool()
-async def generate_test_data() -> str:
-    """
-    Generates a mock dataset based on the current registry schema for testing purposes.
-    """
-    try:
-        script_path = PROJECT_ROOT / "src/r/variables/generate_test_data.r"
-        result = subprocess.run(["Rscript", str(script_path)], capture_output=True, text=True, cwd=PROJECT_ROOT)
-        if result.returncode == 0:
-            return f"TEST DATA GENERATED:\n{result.stdout}\n{result.stderr}"
-        else:
-            return f"EXECUTION FAILED:\n{result.stderr}"
-    except Exception as e:
-        return f"ERROR: {str(e)}"
-
-@mcp.tool()
-async def suggest_metadata_from_raw(file_path: str) -> str:
-    """
-    Analyzes a raw CSV file to suggest mappings for the Master Clinical Registry.
-    Useful when headers are cryptic or human-readable names are missing.
-    """
-    try:
-        script_path = PROJECT_ROOT / "src/python/data_dictionary/clinical-metadata_suggester.py"
-        result = subprocess.run(["python3", str(script_path), file_path], 
-                                capture_output=True, text=True, cwd=PROJECT_ROOT)
-        if result.returncode == 0:
-            return f"SUGGESTED REGISTRY ENTRIES:\n{result.stdout}"
-        else:
-            return f"ERROR ANALYZING FILE:\n{result.stderr}"
-    except Exception as e:
-        return f"ERROR: {str(e)}"
+    """Returns the master clinical registry."""
+    return engine.registry_path.read_text()
 
 if __name__ == "__main__":
     mcp.run()
