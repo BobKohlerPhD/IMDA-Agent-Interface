@@ -1,5 +1,5 @@
 # Integrated Medical Data Architecture (IMDA)
-
+*still a work in progress* 
 The Integrated Medical Data Architecture (IMDA) is a multi-modal clinical data processing pipeline that helps address constraints inherent in large cohort research and data collection. 
 
 ## Data Types and General Information
@@ -25,8 +25,6 @@ The architecture handles data processing through high-efficiency batching, allow
 ---
 
 ## Privacy
-
-*still a work in progress* 
 
 Clinical environments operate under compliance constraints (HIPAA, GDPR, EU AI Act).
 
